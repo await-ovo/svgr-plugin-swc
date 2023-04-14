@@ -1598,7 +1598,6 @@ version = "0.12.3"
 dependencies = [
  "swc_common",
  "swc_core",
- "tracing",
 ]
 
 [[package]]
@@ -1627,10 +1626,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_plugin_remove_jsx_attribute"
+version = "0.12.3"
+dependencies = [
+ "serde",
+ "serde_json",
+ "swc_common",
+ "swc_core",
+]
+
+[[package]]
 name = "swc_plugin_transform_svg_component"
 version = "0.1.0"
 dependencies = [
- "serde",
  "serde_json",
  "swc_common",
  "swc_core",

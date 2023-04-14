@@ -1,15 +1,18 @@
 [package]
 authors = ["await-ovo <13152410380@163.com>"]
-description = "SWC plugin for adding jsx attribute"
+description = "SWC plugin for removing jsx attribute"
 edition = "2021"
 license = "MIT"
-name = "swc_plugin_add_jsx_attribute"
+name = "swc_plugin_remove_jsx_attribute"
+publish = false
 version = "0.12.3"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+serde = "1.0"
+serde_json = "1.0"
 swc_common = { version = "0.31.0", features = ["concurrent"] }
 swc_core = { version = "0.75.8", features = [
   "ecma_plugin_transform",
@@ -18,3 +21,6 @@ swc_core = { version = "0.75.8", features = [
   "ecma_ast",
   "common",
 ] }
+
+[dev-dependencies]
+swc_core = { features = ["ecma_parser"], version = "0.75.8" }
