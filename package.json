@@ -1,0 +1,13 @@
+{
+  "name": "svgr-plugin-swc-monorepo",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:crates": "cargo build  --release --target wasm32-wasi",
+    "build": "pnpm run build:crates && pnpm -r run prepublishOnly"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

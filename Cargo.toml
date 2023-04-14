@@ -1,0 +1,13 @@
+[workspace]
+members = [
+  "packages/swc-plugin-transform-svg-component",
+  "packages/swc-plugin-add-jsx-attribute",
+]
+
+[profile.release]
+codegen-units = 1
+# debug = true
+lto = true
+
+# Optimize for size
+opt-level = "s"

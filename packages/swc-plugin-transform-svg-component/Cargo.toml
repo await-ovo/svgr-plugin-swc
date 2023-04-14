@@ -1,0 +1,19 @@
+[package]
+description = "transform SVG into component in SWC"
+edition = "2021"
+license = "MIT"
+name = "swc_plugin_transform_svg_component"
+publish = false
+version = "0.1.0"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+serde = "1.0"
+serde_json = "1.0"
+transform_svg_component = { version = "0.1.0", path = "./transform" }
+swc_common = { version = "0.31.0", features = ["concurrent"] }
+swc_core = { version = "0.75.8", features = [
+  "ecma_plugin_transform"
+]}

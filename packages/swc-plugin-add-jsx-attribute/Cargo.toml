@@ -1,0 +1,22 @@
+[package]
+authors = ["강동윤 <kdy1997.dev@gmail.com>"]
+description = "Noop plugin for debugging."
+edition = "2021"
+license = "Apache-2.0"
+name = "swc_plugin_add_jsx_attribute"
+publish = false
+version = "0.12.3"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+swc_common = { version = "0.31.0", features = ["concurrent"] }
+swc_core = { version = "0.75.0", features = [
+  "ecma_plugin_transform",
+  "ecma_utils",
+  "ecma_visit",
+  "ecma_ast",
+  "common",
+] }
+tracing = { version = "0.1.37", features = ["release_max_level_off"] }
