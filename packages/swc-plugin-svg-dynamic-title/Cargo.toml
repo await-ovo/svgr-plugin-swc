@@ -1,0 +1,26 @@
+[package]
+authors = ["await-ovo <13152410380@163.com>"]
+description = "SWC plugin for adding dynamic title element in SVG transform"
+edition = "2021"
+license = "MIT"
+name = "swc_plugin_svg_dynamic_title"
+publish = false
+version = "0.1.0"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+serde = "1.0"
+serde_json = "1.0"
+swc_common = { version = "0.31.0", features = ["concurrent"] }
+swc_core = { version = "0.75.8", features = [
+  "ecma_plugin_transform",
+  "ecma_utils",
+  "ecma_visit",
+  "ecma_ast",
+  "common",
+] }
+
+[dev-dependencies]
+swc_core = { features = ["ecma_parser"], version = "0.75.8" }

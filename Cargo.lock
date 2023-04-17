@@ -1646,6 +1646,46 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_plugin_replace_jsx_attribute_value"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "swc_common",
+ "swc_core",
+]
+
+[[package]]
+name = "swc_plugin_svg_dynamic_title"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "swc_common",
+ "swc_core",
+]
+
+[[package]]
+name = "swc_plugin_svg_em_dimensions"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "swc_common",
+ "swc_core",
+]
+
+[[package]]
+name = "swc_plugin_transform_react_native_svg"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "swc_common",
+ "swc_core",
+]
+
+[[package]]
 name = "swc_plugin_transform_svg_component"
 version = "0.1.0"
 dependencies = [

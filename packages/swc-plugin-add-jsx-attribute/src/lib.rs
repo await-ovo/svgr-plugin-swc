@@ -17,7 +17,7 @@ enum Position {
     End,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize)]
 #[serde(untagged)]
 enum Value {
     Boolean(bool),
