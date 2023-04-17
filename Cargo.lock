@@ -1596,6 +1596,8 @@ dependencies = [
 name = "swc_plugin_add_jsx_attribute"
 version = "0.12.3"
 dependencies = [
+ "serde",
+ "serde_json",
  "swc_common",
  "swc_core",
 ]
@@ -1627,7 +1629,7 @@ dependencies = [
 
 [[package]]
 name = "swc_plugin_remove_jsx_attribute"
-version = "0.12.3"
+version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",

@@ -8,7 +8,6 @@ use swc_core::{
     },
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
-
 #[derive(Deserialize)]
 pub struct Options {
     elements: Vec<String>,
