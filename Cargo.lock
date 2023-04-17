@@ -1638,6 +1638,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "swc_plugin_remove_jsx_empty_expression"
+version = "0.1.0"
+dependencies = [
+ "swc_common",
+ "swc_core",
+]
+
+[[package]]
 name = "swc_plugin_transform_svg_component"
 version = "0.1.0"
 dependencies = [

@@ -3,6 +3,7 @@ members = [
   "packages/swc-plugin-transform-svg-component",
   "packages/swc-plugin-add-jsx-attribute",
   "packages/swc-plugin-remove-jsx-attribute",
+  "packages/swc-plugin-remove-jsx-empty-expression",
 ]
 
 [profile.release]

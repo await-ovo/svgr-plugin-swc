@@ -47,6 +47,8 @@ pub struct TransformVisitor {
 
 impl VisitMut for TransformVisitor {
     fn visit_mut_jsx_opening_element(&mut self, jsx_opening_element: &mut JSXOpeningElement) {
+        jsx_opening_element.visit_mut_children_with(self);
+        
         if let JSXElementName::Ident(Ident { sym, .. }) = &jsx_opening_element.name {
             if self.options.elements.contains(&sym.to_string()) {
                 for attribute_option in &self.options.attributes {
@@ -71,8 +73,6 @@ impl VisitMut for TransformVisitor {
                 }
             }
         }
-
-        jsx_opening_element.visit_mut_children_with(self);
     }
 }
 

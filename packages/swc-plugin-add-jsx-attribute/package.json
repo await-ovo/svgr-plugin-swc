@@ -1,6 +1,6 @@
 {
   "name": "swc-plugin-add-jsx-attribute",
-  "description": "transform SVG into component in SWC",
+  "description": "SWC plugin for adding jsx attribute",
   "version": "0.1.0",
   "license": "MIT",
   "keywords": [
