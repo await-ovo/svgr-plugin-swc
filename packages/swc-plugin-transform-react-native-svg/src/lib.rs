@@ -136,8 +136,7 @@ impl VisitMut for JSXElementVisitor {
                     state.element_to_components.get(&sym.to_string()).cloned()
                 };
 
-                if let Some(component) = component
-                {
+                if let Some(component) = component {
                     let new_name =
                         JSXElementName::Ident(Ident::new(component.as_str().into(), DUMMY_SP));
                     jsx_element.opening.name = new_name.clone();
@@ -146,7 +145,10 @@ impl VisitMut for JSXElementVisitor {
                             closing_element.name = new_name;
                         }
                     }
-                    self.state.borrow_mut().replaced_components.insert(component);
+                    self.state
+                        .borrow_mut()
+                        .replaced_components
+                        .insert(component);
                 }
             }
         }
@@ -163,7 +165,6 @@ impl<C: Comments> VisitMut for ImportDeclVisitor<C> {
             value: source_value,
             ..
         } = *(import_decl.src.clone());
-
         if source_value.to_string() == "react-native-svg" {
             for component in &self.state.borrow().replaced_components {
                 if import_decl.specifiers.iter().any(|x| match x {
@@ -174,15 +175,14 @@ impl<C: Comments> VisitMut for ImportDeclVisitor<C> {
                     ImportSpecifier::Named(ImportNamedSpecifier {
                         local: Ident { sym, .. },
                         ..
-                    }) => {
-                        sym == component
-                    }
+                    }) => sym == component,
+
                     ImportSpecifier::Namespace(ImportStarAsSpecifier {
                         local: Ident { sym, .. },
                         ..
                     }) => sym == component,
                 }) {
-                    return;
+                    continue;
                 }
                 import_decl
                     .specifiers
@@ -198,18 +198,26 @@ impl<C: Comments> VisitMut for ImportDeclVisitor<C> {
         }
 
         if !self.state.borrow().unsupported_components.is_empty() {
-            self.comments.add_trailing_comments(
-                import_decl.span.lo,
-                self.state
-                    .borrow()
-                    .unsupported_components
-                    .iter()
-                    .map(|x| Comment {
-                        kind: CommentKind::Line,
-                        span: DUMMY_SP,
-                        text: x.to_string().into(),
-                    })
-                    .collect(),
+            let comment_list = self
+                .state
+                .borrow()
+                .unsupported_components
+                .iter()
+                .map(|x| x.as_str())
+                .collect::<Vec<&str>>()
+                .join(",");
+
+            self.comments.add_trailing(
+                import_decl.span.hi,
+                Comment {
+                    kind: CommentKind::Block,
+                    span: DUMMY_SP,
+                    text: format!(
+                        " SVGR has dropped some elements not supported by react-native-svg: {} ",
+                        comment_list
+                    )
+                    .into(),
+                },
             )
         }
     }

@@ -1,12 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "vitest";
 import { transformSync, parseSync } from "@swc/core";
 
-
 const testPlugin = (code: string) => {
-const ast = parseSync(code, {
-  syntax: 'ecmascript',
-  jsx: true,
-});
+  const ast = parseSync(code, {
+    syntax: "ecmascript",
+    jsx: true,
+  });
   const result = transformSync(ast, {
     jsc: {
       parser: {
@@ -21,7 +20,7 @@ const ast = parseSync(code, {
             require.resolve(
               "../../../target/wasm32-wasi/release/swc_plugin_transform_react_native_svg.wasm",
               {
-                paths: [__dirname]
+                paths: [__dirname],
               }
             ),
             {},
@@ -30,25 +29,21 @@ const ast = parseSync(code, {
       },
     },
   });
-
   return result?.code;
 };
 
 describe("plugin", () => {
   it("should transform elements", () => {
     const code = testPlugin("<svg><div /></svg>");
-    console.log(`transfromed code --->`, code);
-    expect(code).toMatchInlineSnapshot(`"<Svg></Svg>;"`);
+    expect(code).toBe("<Svg></Svg>;\n");
   });
 
   it("should add import", () => {
     const code = testPlugin(
-      `import Svg from 'react-native-svg'; <svg><g /><div /></svg>;`
+      `import Svg, { Defs } from 'react-native-svg'; <svg><g /><div /><defs></defs></svg>;`
     );
-    expect(code).toMatchInlineSnapshot(`
-      "import Svg, { G } from 'react-native-svg';
-      /* SVGR has dropped some elements not supported by react-native-svg: div */
-      <Svg><G /></Svg>;"
-    `);
+    expect(code).toBe(
+      "import Svg, { Defs, G } from 'react-native-svg';\n/* SVGR has dropped some elements not supported by react-native-svg: div */ <Svg><G/><Defs></Defs></Svg>;\n"
+    );
   });
 });
