@@ -8,7 +8,7 @@ publish = false
 version = "0.1.0"
 
 [lib]
-crate-type = ["cdylib", "rlib"]
+crate-type = ["cdylib"]
 
 [dependencies]
 serde = "1.0"

@@ -1,0 +1,16 @@
+{
+  "name": "swc_plugin_transform_react_native_svg",
+  "description": "SWC plugin for transform DOM elements into react-native-svg components",
+  "version": "0.1.0",
+  "license": "MIT",
+  "keywords": [
+      "swc-plugin"
+  ],
+  "files": [
+      "swc_plugin_transform_react_native_svg.wasm"
+  ],
+  "main": "swc_plugin_transform_react_native_svg.wasm",
+  "scripts": {
+      "prepublishOnly": "cp ../../target/wasm32-wasi/release/swc_plugin_transform_react_native_svg.wasm ."
+  }
+}

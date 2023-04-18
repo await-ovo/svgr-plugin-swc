@@ -1,0 +1,16 @@
+{
+  "name": "swc_plugin_svg_dynamic_title",
+  "description": "SWC plugin for adding dynamic title element in SVG transform",
+  "version": "0.1.0",
+  "license": "MIT",
+  "keywords": [
+      "swc-plugin"
+  ],
+  "files": [
+      "swc_plugin_svg_dynamic_title.wasm"
+  ],
+  "main": "swc_plugin_svg_dynamic_title.wasm",
+  "scripts": {
+      "prepublishOnly": "cp ../../target/wasm32-wasi/release/swc_plugin_svg_dynamic_title.wasm ."
+  }
+}

@@ -8,7 +8,7 @@ publish = false
 version = "0.1.0"
 
 [lib]
-crate-type = ["cdylib", "rlib"]
+crate-type = ["cdylib"]
 
 [dependencies]
 serde = "1.0"
@@ -21,6 +21,3 @@ swc_core = { version = "0.75.8", features = [
   "ecma_ast",
   "common",
 ] }
-
-[dev-dependencies]
-swc_core = { features = ["ecma_parser"], version = "0.75.8" }
