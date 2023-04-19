@@ -1,5 +1,5 @@
 {
-  "name": "swc_plugin_svg_dynamic_title",
+  "name": "swc-plugin-svg-dynamic-title",
   "description": "SWC plugin for adding dynamic title element in SVG transform",
   "version": "0.1.0",
   "license": "MIT",

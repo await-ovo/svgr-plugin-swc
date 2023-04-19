@@ -1,5 +1,5 @@
 {
-  "name": "swc_plugin_svg_em_dimensions",
+  "name": "swc-plugin-svg-em-dimensions",
   "description": "Transform SVG to use em-based dimensions",
   "version": "0.1.0",
   "license": "MIT",
