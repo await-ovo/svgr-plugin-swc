@@ -1,4 +1,3 @@
-import { describe, it, expect } from "vitest";
 import { transformSync, parseSync } from "@swc/core";
 
 const testPlugin = (code: string) => {

@@ -18,8 +18,9 @@ pub struct TransformSVGComponentVisitor {
 
 impl VisitMut for TransformSVGComponentVisitor {
     fn visit_mut_jsx_element(&mut self, jsx_element: &mut JSXElement) {
+        jsx_element.visit_mut_children_with(self);
         if let JSXElementName::Ident(tag_name) = &jsx_element.opening.name {
-            if *tag_name.sym == *"svg" {
+            if *tag_name.sym == *"svg" || *tag_name.sym == *"Svg" {
                 self.jsx_svg_element = Some(jsx_element.clone());
             }
         }
@@ -414,9 +415,11 @@ fn get_jsx_runtime_import(cfg: &JSXRuntimeImport) -> ImportDecl {
         }));
     } else if let Some(config_specifiers) = &cfg.specifiers {
         for config_specifier in config_specifiers {
-            specifiers.push(ImportSpecifier::Default(ImportDefaultSpecifier {
+            specifiers.push(ImportSpecifier::Named(ImportNamedSpecifier {
                 span: DUMMY_SP,
                 local: Ident::new((**config_specifier).into(), DUMMY_SP),
+                imported: None,
+                is_type_only: false,
             }));
         }
     } else {
@@ -521,19 +524,4 @@ fn create_svg_svg_element_type_param() -> Option<Box<TsTypeParamInstantiation>> 
             type_params: None,
         }))],
     }))
-}
-
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
 }

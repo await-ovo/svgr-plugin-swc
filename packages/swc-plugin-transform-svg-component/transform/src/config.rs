@@ -58,6 +58,7 @@ pub struct Caller {
 #[serde(rename_all = "camelCase")]
 pub struct State {
     pub component_name: String,
+    #[serde(default = "default_state_caller")]
     pub caller: Caller,
 }
 
@@ -118,6 +119,10 @@ pub fn default_state() -> State {
           previous_export: "".to_string(),
       },
   }
+}
+
+pub fn default_state_caller() -> Caller {
+  Caller { previous_export: "".into() }
 }
 
 pub fn default_expand_props() -> ExpandProps {

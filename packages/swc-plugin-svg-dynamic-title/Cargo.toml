@@ -14,7 +14,7 @@ crate-type = ["cdylib"]
 serde = "1.0"
 serde_json = "1.0"
 swc_common = { version = "0.31.0", features = ["concurrent"] }
-swc_core = { version = "0.75.8", features = [
+swc_core = { version = "0.75.33", features = [
   "ecma_plugin_transform",
   "ecma_utils",
   "ecma_visit",
@@ -23,4 +23,4 @@ swc_core = { version = "0.75.8", features = [
 ] }
 
 [dev-dependencies]
-swc_core = { features = ["ecma_parser"], version = "0.75.8" }
+swc_core = { features = ["ecma_parser"], version = "0.75.33" }
