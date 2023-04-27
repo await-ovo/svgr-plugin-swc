@@ -1,12 +1,9 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
 use serde::Deserialize;
-use swc_core::{
-    ecma::{
-        ast::*,
-        visit::{as_folder, FoldWith, VisitMut, VisitMutWith},
-    },
-    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
+use swc_core::ecma::{
+    ast::*,
+    visit::{VisitMut, VisitMutWith},
 };
 #[derive(Deserialize)]
 pub struct Options {
@@ -39,7 +36,6 @@ impl VisitMut for RemoveJSXAttributeVisitor {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -55,10 +51,10 @@ mod tests {
             ..Default::default()
         }),
         |_| as_folder(RemoveJSXAttributeVisitor {
-           options: Options {
-            elements: vec!["span".into()],
-            attributes: vec!["foo".into()]
-           }
+            options: Options {
+                elements: vec!["span".into()],
+                attributes: vec!["foo".into()]
+            }
         }),
         remove_attributes_from_an_element,
         // Input codes
@@ -74,12 +70,12 @@ mod tests {
         }),
         |_| as_folder(RemoveJSXAttributeVisitor {
             options: Options {
-             elements: vec!["span".into()],
-             attributes: vec!["foo".into()]
+                elements: vec!["span".into()],
+                attributes: vec!["foo".into()]
             }
-         }),
-         not_throw_error_when_spread_operator_is_used,
-         r#"<div foo><span foo {...props} /></div>"#,
-         r#"<div foo><span {...props} /></div>;"#
+        }),
+        not_throw_error_when_spread_operator_is_used,
+        r#"<div foo><span foo {...props} /></div>"#,
+        r#"<div foo><span {...props} /></div>;"#
     );
 }
