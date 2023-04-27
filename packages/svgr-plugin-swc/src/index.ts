@@ -66,71 +66,49 @@ const getPlugins = (config: Config, state: State): SwcPluginOptions => {
 
   const plugins = [
     [
-      require.resolve('swc-plugin-transform-svg-component'),
+      require.resolve('swc-plugin-svgr'),
       {
-        typescript: config.typescript,
-        titleProp: config.titleProp,
-        descProp: config.descProp,
-        expandProps: config.expandProps,
-        ref: config.ref,
-        state,
+        transform_svg_component: {
+          typescript: config.typescript,
+          titleProp: config.titleProp,
+          descProp: config.descProp,
+          expandProps: config.expandProps,
+          ref: config.ref,
+          state,
+          native: config.native,
+          memo: config.memo,
+          exportType: config.exportType,
+          namedExport: config.namedExport,
+          ...getJsxRuntimeOptions(config),
+        } as TransformSvgComponentOptions,
+        em_dimensions:
+          config.icon !== false && config.dimensions
+            ? config.icon !== true
+              ? { width: config.icon, height: config.icon }
+              : config.native
+              ? {
+                  width: 24,
+                  height: 24,
+                }
+              : {}
+            : undefined,
+        remove_jsx_attribute:  {
+          elements: ['svg', 'Svg'],
+          attributes: toRemoveAttributes,
+        },
+        add_jsx_attributes:   {
+          elements: ['svg', 'Svg'],
+          attributes: toAddAttributes,
+        },
+        replace_attribute_values: config.replaceAttrValues ? {
+          values:  replaceMapToValues(config.replaceAttrValues) 
+        } : undefined,
+        title_prop: config.titleProp,
+        desc_prop: config.descProp,
         native: config.native,
-        memo: config.memo,
-        exportType: config.exportType,
-        namedExport: config.namedExport,
-        ...getJsxRuntimeOptions(config),
-      } as TransformSvgComponentOptions,
-    ],
-    config.icon !== false &&
-      config.dimensions && [
-        require.resolve('swc-plugin-svg-em-dimensions'),
-        config.icon !== true
-          ? { width: config.icon, height: config.icon }
-          : config.native
-          ? {
-              width: 24,
-              height: 24,
-            }
-          : {},
-      ],
-    [
-      require.resolve('swc-plugin-remove-jsx-attribute'),
-      {
-        elements: ['svg', 'Svg'],
-        attributes: toRemoveAttributes,
       },
     ],
-    [
-      require.resolve('swc-plugin-add-jsx-attribute'),
-      {
-        elements: ['svg', 'Svg'],
-        attributes: toAddAttributes,
-      },
-    ],
-    [require.resolve('swc-plugin-remove-jsx-empty-expression'), {}],
-  ].filter(Boolean) as SwcPluginOptions;
-
-  if (config.replaceAttrValues) {
-    plugins.push([
-      require.resolve('swc-plugin-replace-jsx-attribute-value'),
-      {
-        values: replaceMapToValues(config.replaceAttrValues),
-      },
-    ]);
-  }
-
-  if (config.titleProp) {
-    plugins.push([require.resolve('swc-plugin-svg-dynamic-title'), {}]);
-  }
-
-  if (config.descProp) {
-    plugins.push([require.resolve('swc-plugin-svg-dynamic-title'), { tag: 'desc' }])
-  }
-
-  if (config.native) {
-    plugins.push([require.resolve('swc-plugin-transform-react-native-svg'), {}])
-  }
-
+  ] as SwcPluginOptions;
   return plugins;
 };
 

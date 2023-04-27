@@ -7,7 +7,8 @@ use swc_core::{
     },
     plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
-use transform_svg_component::{ config::Config, TransformSVGComponentVisitor};
+pub use transform_svg_component::{ config::Config, TransformSVGComponentVisitor};
+
 
 #[plugin_transform]
 pub fn svg_to_component(program: Program, data: TransformPluginProgramMetadata) -> Program {

@@ -4,10 +4,9 @@ use swc_common::{DUMMY_SP, input::StringInput, BytePos};
 use swc_core::{
     ecma::{
         ast::*,
-        visit::{as_folder, FoldWith, VisitMut, VisitMutWith},
+        visit::{VisitMut, VisitMutWith},
         parser::{EsConfig, Parser, Syntax},
-    },
-    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
+    }
 };
 
 #[derive(Deserialize)]
@@ -27,14 +26,14 @@ pub struct Value {
 
 #[derive(Deserialize)]
 pub struct Options {
-    values: Vec<Value>,
+    pub values: Vec<Value>,
 }
 
-pub struct TransformVisitor {
-    options: Options,
+pub struct ReplaceJSXAttributeValueVisitor {
+    pub options: Options,
 }
 
-impl VisitMut for TransformVisitor {
+impl VisitMut for ReplaceJSXAttributeValueVisitor {
     fn visit_mut_jsx_attr(&mut self, jsx_attr: &mut JSXAttr) {
         jsx_attr.visit_mut_children_with(self);
         if let Some(JSXAttrValue::Lit(Lit::Str(Str { value, .. }))) = &jsx_attr.clone().value {
@@ -108,17 +107,6 @@ fn get_attribute_value(new_value: &NewValue, literal_option: Option<bool>) -> Op
     }
 }
 
-#[plugin_transform]
-pub fn process_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
-    let options = serde_json::from_str::<Options>(
-        &metadata
-            .get_transform_plugin_config()
-            .expect("failed to get plugin config for replace-jsx-attribute-value"),
-    )
-    .expect("invalid config for replace-jsx-attribute-value");
-    program.fold_with(&mut as_folder(TransformVisitor { options }))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -133,7 +121,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor {
+        |_| as_folder(ReplaceJSXAttributeValueVisitor {
             options: Options {
                 values: vec![Value {
                     value: "cool".into(),
@@ -154,7 +142,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor {
+        |_| as_folder(ReplaceJSXAttributeValueVisitor {
             options: Options {
                 values: vec![Value {
                     value: "cool".into(),

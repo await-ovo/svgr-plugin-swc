@@ -14,11 +14,11 @@ pub struct Options {
     attributes: Vec<String>,
 }
 
-pub struct TransformVisitor {
-    options: Options,
+pub struct RemoveJSXAttributeVisitor {
+    pub options: Options,
 }
 
-impl VisitMut for TransformVisitor {
+impl VisitMut for RemoveJSXAttributeVisitor {
     fn visit_mut_jsx_opening_element(&mut self, jsx_opening_element: &mut JSXOpeningElement) {
         jsx_opening_element.visit_mut_children_with(self);
         if let JSXElementName::Ident(Ident { sym, .. }) = &jsx_opening_element.name {
@@ -39,16 +39,6 @@ impl VisitMut for TransformVisitor {
     }
 }
 
-#[plugin_transform]
-pub fn process_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
-    let options = serde_json::from_str::<Options>(
-        &metadata
-            .get_transform_plugin_config()
-            .expect("failed to get plugin config for remove-jsx-attribute"),
-    )
-    .expect("invalid config for remove-jsx-attribute");
-    program.fold_with(&mut as_folder(TransformVisitor { options }))
-}
 
 #[cfg(test)]
 mod tests {
@@ -64,7 +54,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor {
+        |_| as_folder(RemoveJSXAttributeVisitor {
            options: Options {
             elements: vec!["span".into()],
             attributes: vec!["foo".into()]
@@ -82,7 +72,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor {
+        |_| as_folder(RemoveJSXAttributeVisitor {
             options: Options {
              elements: vec!["span".into()],
              attributes: vec!["foo".into()]

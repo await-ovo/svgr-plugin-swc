@@ -1,13 +1,8 @@
 [workspace]
 members = [
+  "packages/swc-plugin-svgr",
   "packages/swc-plugin-transform-svg-component",
-  "packages/swc-plugin-add-jsx-attribute",
-  "packages/swc-plugin-remove-jsx-attribute",
-  "packages/swc-plugin-remove-jsx-empty-expression",
-  "packages/swc-plugin-replace-jsx-attribute-value",
-  "packages/swc-plugin-svg-dynamic-title",
-  "packages/swc-plugin-svg-em-dimensions",
-  "packages/swc-plugin-transform-react-native-svg"
+  "packages/swc-plugin-transform-svg-component/transform",
 ]
 
 [profile.release]

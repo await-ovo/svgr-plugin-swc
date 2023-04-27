@@ -14,14 +14,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "swc-plugin-add-jsx-attribute": "workspace:*",
-    "swc-plugin-remove-jsx-attribute": "workspace:*",
-    "swc-plugin-remove-jsx-empty-expression": "workspace:*",
-    "swc-plugin-replace-jsx-attribute-value": "workspace:*",
-    "swc-plugin-svg-dynamic-title": "workspace:*",
-    "swc-plugin-svg-em-dimensions": "workspace:*",
-    "swc-plugin-transform-react-native-svg": "workspace:*",
-    "swc-plugin-transform-svg-component": "workspace:*"
+    "swc-plugin-svgr": "workspace:*"
   },
   "devDependencies": {
     "@svgr/core": "^7.0.0",

@@ -2,14 +2,13 @@
 use swc_core::{
     ecma::{
         ast::*,
-        visit::{as_folder, FoldWith, VisitMut, VisitMutWith},
+        visit::{VisitMut, VisitMutWith},
     },
-    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
 };
 
-pub struct TransformVisitor;
+pub struct RemoveEmptyExpressionVisitor;
 
-impl VisitMut for TransformVisitor {
+impl VisitMut for RemoveEmptyExpressionVisitor {
     fn visit_mut_jsx_element(&mut self, jsx_element: &mut JSXElement) {
         jsx_element.visit_mut_children_with(self);
 
@@ -17,11 +16,6 @@ impl VisitMut for TransformVisitor {
             !matches!(element, JSXElementChild::JSXExprContainer(JSXExprContainer { expr: JSXExpr::JSXEmptyExpr(_), .. }))
         })
     }
-}
-
-#[plugin_transform]
-pub fn process_transform(program: Program, _metadata: TransformPluginProgramMetadata) -> Program {
-    program.fold_with(&mut as_folder(TransformVisitor))
 }
 
 #[cfg(test)]
@@ -38,7 +32,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor),
+        |_| as_folder(RemoveEmptyExpressionVisitor),
         remove_empty_expression,
         // Input codes
         r#"<div><p>The user is <b>{isLoggedIn ? 'currently' : 'not'}</b> logged in.</p><a />{}<div>222 {}</div><span>{} 222</span></div>"#,
@@ -51,14 +45,11 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor),
+        |_| as_folder(RemoveEmptyExpressionVisitor),
         remove_empty_expression_with_comments,
         // Input codes
         r#"<div>{/* Hello */}<a /></div>"#,
         // Output codes after transformed with plugin
         r#"<div><a /></div>;"#
     );
-
-   
-
 }

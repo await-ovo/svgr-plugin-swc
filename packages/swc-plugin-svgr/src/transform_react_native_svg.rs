@@ -13,7 +13,7 @@ use swc_core::{
         ast::*,
         visit::{VisitMut, VisitMutWith},
     },
-    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
+    plugin::proxies::PluginCommentsProxy,
 };
 
 pub struct State {
@@ -76,7 +76,7 @@ pub struct JSXElementVisitor {
 }
 
 impl JSXElementVisitor {
-    fn new(state: Rc<RefCell<State>>) -> Self {
+    pub fn new(state: Rc<RefCell<State>>) -> Self {
         JSXElementVisitor {
             is_in_svg_element: false,
             state,
@@ -223,15 +223,46 @@ impl<C: Comments> VisitMut for ImportDeclVisitor<C> {
     }
 }
 
-#[plugin_transform]
-pub fn process_transform(
-    mut program: Program,
-    metadata: TransformPluginProgramMetadata,
-) -> Program {
-    let state: Rc<RefCell<State>> = Rc::new(RefCell::new(State::default()));
+pub struct TransformReactNativeSVGVisitor {
+    pub comments: Option<PluginCommentsProxy>,
+}
 
-    program.visit_mut_with(&mut (JSXElementVisitor::new(state.clone())));
-    program.visit_mut_with(&mut (ImportDeclVisitor::new(state, metadata.comments)));
+impl VisitMut for TransformReactNativeSVGVisitor {
+    fn visit_mut_program(&mut self, program: &mut Program) {
+        let state: Rc<RefCell<State>> = Rc::new(RefCell::new(State::default()));
+        program.visit_mut_with(&mut (JSXElementVisitor::new(state.clone())));
+        program.visit_mut_with(&mut (ImportDeclVisitor::new(state, self.comments)));
+    }
+}
 
-    program
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use swc_core::ecma::{
+        parser::{EsConfig, Syntax},
+        transforms::testing::test,
+        visit::as_folder,
+    };
+
+    test!(
+        Syntax::Es(EsConfig {
+            jsx: true,
+            ..Default::default()
+        }),
+        |_| as_folder(TransformReactNativeSVGVisitor { comments: None }),
+        remove_attributes_from_an_element,
+        r#"<svg><div /></svg>"#,
+        r#"<Svg></Svg>;"#
+    );
+
+    test!(
+        Syntax::Es(EsConfig {
+            jsx: true,
+            ..Default::default()
+        }),
+        |_| as_folder(TransformReactNativeSVGVisitor { comments: None }),
+        not_throw_error_when_spread_operator_is_used,
+        r#"import Svg, { Defs } from 'react-native-svg'; <svg><g /><div /><defs></defs></svg>;"#,
+        r#"import Svg, { Defs, G } from 'react-native-svg';/* SVGR has dropped some elements not supported by react-native-svg: div */ <Svg><G/><Defs></Defs></Svg>;"#
+    );
 }

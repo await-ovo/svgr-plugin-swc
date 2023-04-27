@@ -41,11 +41,11 @@ pub struct Options {
     attributes: Vec<AttributeOption>,
 }
 
-pub struct TransformVisitor {
-    options: Options,
+pub struct AddJSXAttributeVisitor {
+    pub options: Options,
 }
 
-impl VisitMut for TransformVisitor {
+impl VisitMut for AddJSXAttributeVisitor {
     fn visit_mut_jsx_opening_element(&mut self, jsx_opening_element: &mut JSXOpeningElement) {
         jsx_opening_element.visit_mut_children_with(self);
         
@@ -191,16 +191,6 @@ fn is_equal_with_new_attribute(
     is_equal_attribute
 }
 
-#[plugin_transform]
-pub fn process_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
-    let options = serde_json::from_str::<Options>(
-        &metadata
-            .get_transform_plugin_config()
-            .expect("failed to get plugin config for add-jsx-attribute"),
-    )
-    .expect("invalid config for add-jsx-attribute");
-    program.fold_with(&mut as_folder(TransformVisitor { options }))
-}
 
 #[cfg(test)]
 mod tests {
@@ -216,7 +206,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor {
+        |_| as_folder(AddJSXAttributeVisitor {
             options: Options {
                 elements: vec!["div".into()],
                 attributes: vec![AttributeOption {
@@ -239,7 +229,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor {
+        |_| as_folder(AddJSXAttributeVisitor {
             options: Options {
                 elements: vec!["div".into()],
                 attributes: vec![AttributeOption {
@@ -262,7 +252,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor {
+        |_| as_folder(AddJSXAttributeVisitor {
             options: Options {
                 elements: vec!["div".into()],
                 attributes: vec![AttributeOption {
@@ -285,7 +275,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor {
+        |_| as_folder(AddJSXAttributeVisitor {
             options: Options {
                 elements: vec!["div".into()],
                 attributes: vec![AttributeOption {
@@ -308,7 +298,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor {
+        |_| as_folder(AddJSXAttributeVisitor {
             options: Options {
                 elements: vec!["span".into()],
                 attributes: vec![AttributeOption {
@@ -331,7 +321,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor {
+        |_| as_folder(AddJSXAttributeVisitor {
             options: Options {
                 elements: vec!["div".into()],
                 attributes: vec![AttributeOption {

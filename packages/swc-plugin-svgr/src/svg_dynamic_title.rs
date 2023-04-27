@@ -1,32 +1,26 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 use serde::Deserialize;
 use swc_common::DUMMY_SP;
-use swc_core::{
-    ecma::{
-        ast::*,
-        visit::{as_folder, FoldWith, VisitMut},
-    },
-    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
-};
+use swc_core::ecma::{ast::*, visit::VisitMut};
 
 #[derive(Deserialize)]
 pub struct Options {
     #[serde(default = "default_tag")]
-    tag: String,
+    pub tag: String,
 }
 
 fn default_tag() -> String {
     "title".into()
 }
 
-pub struct TransformVisitor {
+pub struct DynamicTitleVisitor {
     elements: Vec<String>,
     options: Options,
 }
 
-impl TransformVisitor {
+impl DynamicTitleVisitor {
     pub fn new(options: Options) -> Self {
-        TransformVisitor {
+        DynamicTitleVisitor {
             elements: vec!["svg".into(), "Svg".into()],
             options,
         }
@@ -96,7 +90,7 @@ impl TransformVisitor {
     }
 }
 
-impl VisitMut for TransformVisitor {
+impl VisitMut for DynamicTitleVisitor {
     fn visit_mut_jsx_element(&mut self, jsx_element: &mut JSXElement) {
         if let JSXElement {
             opening:
@@ -231,17 +225,6 @@ fn create_tag_element(
     }
 }
 
-#[plugin_transform]
-pub fn process_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
-    let options = serde_json::from_str::<Options>(
-        &metadata
-            .get_transform_plugin_config()
-            .expect("failed to get plugin config for svg-dynamic-title"),
-    )
-    .expect("invalid config for svg-dynamic-title");
-    program.fold_with(&mut as_folder(TransformVisitor::new(options)))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -256,7 +239,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options {
+        |_| as_folder(DynamicTitleVisitor::new(Options {
             tag: "title".into()
         })),
         add_title_attribute_if_not_present,
@@ -269,7 +252,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options {
+        |_| as_folder(DynamicTitleVisitor::new(Options {
             tag: "title".into()
         })),
         add_title_element_and_fallback_to_existing_title,
@@ -282,7 +265,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options {
+        |_| as_folder(DynamicTitleVisitor::new(Options {
             tag: "title".into()
         })),
         existing_title_contains_jsx_expr,
@@ -295,7 +278,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options {
+        |_| as_folder(DynamicTitleVisitor::new(Options {
             tag: "title".into()
         })),
         preserve_any_existing_title_attributes,
@@ -308,7 +291,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options {
+        |_| as_folder(DynamicTitleVisitor::new(Options {
             tag: "title".into()
         })),
         empty_title,
@@ -321,7 +304,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options {
+        |_| as_folder(DynamicTitleVisitor::new(Options {
             tag: "title".into()
         })),
         self_closing_title,
@@ -334,7 +317,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options { tag: "desc".into() })),
+        |_| as_folder(DynamicTitleVisitor::new(Options { tag: "desc".into() })),
         attribute_is_already_present,
         r#"<svg></svg>"#,
         r#"<svg>{desc ? <desc id={descId}>{desc}</desc> : null}</svg>;"#
@@ -345,7 +328,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options { tag: "desc".into() })),
+        |_| as_folder(DynamicTitleVisitor::new(Options { tag: "desc".into() })),
         add_desc_element_and_fallback_to_existing_desc,
         r#"<svg><desc>Hello</desc></svg>"#,
         r#"<svg>{desc === undefined ? <desc id={descId}>Hello</desc> : desc ? <desc id={descId}>{desc}</desc> : null}</svg>;"#
@@ -356,7 +339,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options { tag: "desc".into() })),
+        |_| as_folder(DynamicTitleVisitor::new(Options { tag: "desc".into() })),
         existing_desc_contains_jsx_expr,
         r#"<svg><desc>{"Hello"}</desc></svg>"#,
         r#"<svg>{desc === undefined ? <desc id={descId}>{"Hello"}</desc> : desc ? <desc id={descId}>{desc}</desc> : null}</svg>;"#
@@ -367,7 +350,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options { tag: "desc".into() })),
+        |_| as_folder(DynamicTitleVisitor::new(Options { tag: "desc".into() })),
         preserve_any_existing_desc_attributes,
         r#"<svg><desc id='a'>Hello</desc></svg>"#,
         r#"<svg>{desc === undefined ? <desc id={descId || 'a'}>Hello</desc> : desc ? <desc id={descId || 'a'}>{desc}</desc> : null}</svg>;"#
@@ -378,7 +361,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options { tag: "desc".into() })),
+        |_| as_folder(DynamicTitleVisitor::new(Options { tag: "desc".into() })),
         empty_desc,
         r#"<svg><desc></desc></svg>"#,
         r#"<svg>{desc ? <desc id={descId}>{desc}</desc> : null}</svg>;"#
@@ -389,7 +372,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options { tag: "desc".into() })),
+        |_| as_folder(DynamicTitleVisitor::new(Options { tag: "desc".into() })),
         self_closing_desc,
         r#"<svg><desc /></svg>"#,
         r#"<svg>{desc ? <desc id={descId}>{desc}</desc> : null}</svg>;"#
@@ -400,7 +383,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options { tag: "desc".into() })),
+        |_| as_folder(DynamicTitleVisitor::new(Options { tag: "desc".into() })),
         desc_attribute_is_already_present,
         r#"<svg><foo /></svg>"#,
         r#"<svg>{desc ? <desc id={descId}>{desc}</desc> : null}<foo /></svg>;"#

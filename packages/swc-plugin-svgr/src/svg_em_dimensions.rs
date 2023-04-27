@@ -1,12 +1,9 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 use serde::Deserialize;
 use swc_common::DUMMY_SP;
-use swc_core::{
-    ecma::{
-        ast::*,
-        visit::{as_folder, FoldWith, VisitMut, VisitMutWith},
-    },
-    plugin::{plugin_transform, proxies::TransformPluginProgramMetadata},
+use swc_core::ecma::{
+    ast::*,
+    visit::{VisitMut, VisitMutWith},
 };
 
 #[derive(Deserialize, Clone)]
@@ -22,15 +19,15 @@ pub struct Options {
     height: Option<NumberOrString>,
 }
 
-pub struct TransformVisitor {
+pub struct SVGEmDimensionsVisitor {
     elements: Vec<String>,
     height_value: JSXAttrValue,
     width_value: JSXAttrValue,
 }
 
-impl TransformVisitor {
+impl SVGEmDimensionsVisitor {
     pub fn new(options: Options) -> Self {
-        TransformVisitor {
+        SVGEmDimensionsVisitor {
             elements: vec!["svg".into(), "Svg".into()],
             height_value: get_value(&options.height),
             width_value: get_value(&options.width),
@@ -52,7 +49,7 @@ impl TransformVisitor {
     }
 }
 
-impl VisitMut for TransformVisitor {
+impl VisitMut for SVGEmDimensionsVisitor {
     fn visit_mut_jsx_opening_element(&mut self, jsx_opening_element: &mut JSXOpeningElement) {
         jsx_opening_element.visit_mut_children_with(self);
         if let JSXElementName::Ident(Ident { sym, .. }) = &jsx_opening_element.name {
@@ -86,7 +83,6 @@ impl VisitMut for TransformVisitor {
                 if !replace_height {
                     jsx_opening_element.attrs.push(self.get_attr("height"));
                 }
-              
             }
         }
     }
@@ -116,17 +112,6 @@ fn get_value(raw_option: &Option<NumberOrString>) -> JSXAttrValue {
     }
 }
 
-#[plugin_transform]
-pub fn process_transform(program: Program, metadata: TransformPluginProgramMetadata) -> Program {
-    let options = serde_json::from_str::<Options>(
-        &metadata
-            .get_transform_plugin_config()
-            .expect("failed to get plugin config for svg-em-dimensions"),
-    )
-    .expect("invalid config for svg-em-dimensions");
-    program.fold_with(&mut as_folder(TransformVisitor::new(options)))
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -141,7 +126,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options {
+        |_| as_folder(SVGEmDimensionsVisitor::new(Options {
             width: None,
             height: None,
         })),
@@ -157,7 +142,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options {
+        |_| as_folder(SVGEmDimensionsVisitor::new(Options {
             width: None,
             height: None,
         })),
@@ -173,7 +158,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options {
+        |_| as_folder(SVGEmDimensionsVisitor::new(Options {
             width: Some(NumberOrString::Number(24.into())),
             height: Some(NumberOrString::Number(24.into())),
         })),
@@ -189,7 +174,7 @@ mod tests {
             jsx: true,
             ..Default::default()
         }),
-        |_| as_folder(TransformVisitor::new(Options {
+        |_| as_folder(SVGEmDimensionsVisitor::new(Options {
             width: Some(NumberOrString::String("2em".into())),
             height: Some(NumberOrString::String("2em".into())),
         })),
