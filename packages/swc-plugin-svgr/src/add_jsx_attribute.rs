@@ -337,4 +337,26 @@ mod tests {
         // Output codes after transformed with plugin
         r#"<div disabled={false} />;"#
     );
+
+    test!(
+        Syntax::Es(EsConfig {
+            jsx: true,
+            ..Default::default()
+        }),
+        |_| as_folder(AddJSXAttributeVisitor {
+            options: Options {
+                elements: vec!["div".into()],
+                attributes: vec![AttributeOption {
+                    name: "aria-describedby".into(),
+                    spread: None,
+                    literal: Some(true),
+                    value: Some(Value::String("titleId".into())),
+                    position: None,
+                }]
+            }
+        }),
+        add_aria_attribute,
+        r#"<div />"#,
+        r#"<div aria-describedby={titleId} />;"#
+    );
 }

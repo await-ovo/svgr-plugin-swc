@@ -16,7 +16,7 @@ Add the plugin to your SVGR configuration:
 // .svgrc.js
 module.exports = {
   plugins: [
-    'svgr-plugin-svgo',
+    '@svgr/plugin-svgo',
     'svgr-plugin-swc',
   ],
 };

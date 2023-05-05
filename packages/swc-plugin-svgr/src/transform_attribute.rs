@@ -38,7 +38,7 @@ impl VisitMut for TransformAttributeVisitor {
 
                 if re.is_match(&sym) {
                     jsx_attr.name =
-                        JSXAttrName::Ident(Ident::new(format!("'{}'", sym).into(), DUMMY_SP));
+                        JSXAttrName::Ident(Ident::new(format!("{}", sym).into(), DUMMY_SP));
                 } else {
                     jsx_attr.name =
                         JSXAttrName::Ident(Ident::new(hyphen_to_camel(&sym).into(), DUMMY_SP));
