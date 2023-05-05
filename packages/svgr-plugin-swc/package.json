@@ -5,15 +5,31 @@
   "files": [
     "./dist"
   ],
+  "keywords": [
+    "SVGR",
+    "SWC",
+    "SVGR transformation that using SWC"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/await-ovo/svgr-plugin-swc.git",
+    "directory": "packages/svgr-plugin-swc"
+  },
+  "bugs": {
+    "url": "https://github.com/await-ovo/svgr-plugin-swc/issues"
+  },
+  "author": {
+    "name": "await-ovo",
+    "email": "13152410380@163.com"
+  },
   "main": "./dist/index.js",
   "scripts": {
     "prepublishOnly": "tsup",
     "build": "tsup",
     "dev": "tsup --watch"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
+
   "dependencies": {
     "swc-plugin-svgr": "workspace:*"
   },

@@ -8,7 +8,6 @@
     "build": "pnpm run build:crates && pnpm -r run prepublishOnly",
     "test": "cargo test && jest"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
