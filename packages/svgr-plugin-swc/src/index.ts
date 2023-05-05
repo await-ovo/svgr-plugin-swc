@@ -96,16 +96,16 @@ const getPlugins = (config: Config, state: State): SwcPluginOptions => {
           elements: ['svg', 'Svg'],
           attributes: toRemoveAttributes,
         },
-        add_jsx_attributes:   {
+        add_jsx_attribute:   {
           elements: ['svg', 'Svg'],
           attributes: toAddAttributes,
         },
         replace_attribute_values: config.replaceAttrValues ? {
           values:  replaceMapToValues(config.replaceAttrValues) 
         } : undefined,
-        title_prop: config.titleProp,
-        desc_prop: config.descProp,
-        native: config.native,
+        title_prop: Boolean(config.titleProp),
+        desc_prop: Boolean(config.descProp),
+        native: Boolean(config.native),
       },
     ],
   ] as SwcPluginOptions;

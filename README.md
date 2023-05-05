@@ -19,28 +19,11 @@ module.exports = {
     '@svgr/plugin-svgo',
     'svgr-plugin-swc',
   ],
+  expandProps: false
 };
 ```
 
-You can also pass options to the plugin:
-
-```js
-// .svgrc.js
-module.exports = {
-  plugins: [
-    [
-      'svgr-plugin-swc',
-      {
-        typescript: true,
-        // other options
-      },
-    ],
-    // other plugins
-  ],
-};
-```
-
-This plugin supports all the options that the `@svgr/plugin-jsx` plugin supports, **except for the `template` option**.
+This plugin supports all the options that the `@svgr/plugin-jsx` plugin supports, **except for the `template` and `jsx.babelConfig` option**.
 
 ### Example
 
@@ -73,12 +56,17 @@ const svgCode = fs.readFileSync("./example.svg");
 transform(
   svgCode,
   {
-    icon: true,
     native: true,
-    plugins: ["@svgr/plugin-svgo", "svgr-plugin-swc"],
+    plugins: [
+      "@svgr/plugin-svgo", 
+      "svgr-plugin-swc",
+      "@svgr/plugin-prettier"
+    ],
     typescript: false,
     descProp: true,
     titleProp: true,
+    ref: true,
+    dimensions: false,
     svgProps: { size: "1em" },
   },
   { componentName: "MyComponent" }
@@ -86,18 +74,19 @@ transform(
   fs.writeFileSync("./output.jsx", jsCode, "utf8");
 });
 
+
 ```
 `output.jsx` should output as:
 
 ```
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
-const MyComponent = ({ title, titleId, desc, descId, ...props }) => (
+import { forwardRef } from "react";
+const MyComponent = ({ title, titleId, desc, descId, ...props }, ref) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
-    width={48}
-    height={1}
     size="1em"
+    ref={ref}
     aria-labelledby={titleId}
     aria-describedby={descId}
     {...props}
@@ -107,8 +96,8 @@ const MyComponent = ({ title, titleId, desc, descId, ...props }) => (
     <Path fill="#063855" fillRule="evenodd" d="M0 0h48v1H0z" />
   </Svg>
 );
-export default MyComponent;
-
+const ForwardRef = forwardRef(MyComponent);
+export default ForwardRef;
 ```
 
 

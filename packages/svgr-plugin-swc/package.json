@@ -1,12 +1,13 @@
 {
   "name": "svgr-plugin-swc",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "files": [
     "./dist"
   ],
   "main": "./dist/index.js",
   "scripts": {
+    "prepublishOnly": "tsup",
     "build": "tsup",
     "dev": "tsup --watch"
   },
